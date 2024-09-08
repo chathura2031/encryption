@@ -13,6 +13,7 @@ public static class FileEncryption
     private static Aes GetAesInstance(string key, string? iv = null)
     {
         Aes aes = Aes.Create();
+        aes.KeySize = 256;
         aes.Key = Convert.FromBase64String(key);
         
         if (iv != null) { aes.IV = Convert.FromBase64String(iv); }
@@ -51,6 +52,7 @@ public static class FileEncryption
     public static string GenerateKey()
     {
         using Aes aes = Aes.Create();
+        aes.KeySize = 256;
         aes.GenerateKey();
         return Convert.ToBase64String(aes.Key);
     }
