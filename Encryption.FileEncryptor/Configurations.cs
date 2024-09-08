@@ -4,11 +4,14 @@ namespace Encryption.FileEncryptor;
 
 public class Configurations
 {
-    public string WorkingDirectory { get; set; }
+    [JsonProperty(Required = Required.Default)]
+    public string WorkingDirectory { get; private set; }
     
-    public string KeyFile { get; set; }
+    [JsonProperty(Required = Required.Always)]
+    public string KeyFile { get; private set; }
 
-    public HashSet<string> Exceptions { get; set; }
+    [JsonProperty(Required = Required.Always)]
+    public HashSet<string> Exceptions { get; private set; }
 
     public Configurations(string workingDirectory, string keyFile, string[] exceptions)
     {

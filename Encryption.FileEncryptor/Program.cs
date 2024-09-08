@@ -5,9 +5,11 @@ using Encryption.FileEncryptor;
 AssemblyName assembly = Assembly.GetEntryAssembly().GetName();
 Console.WriteLine($"Version {assembly.Version}");
 
+string workingDir = Directory.GetCurrentDirectory();
+
 // Get the config
 string? input = null;
-string configFile = Path.Join(Directory.GetCurrentDirectory(), "config.json");
+string configFile = Path.Join(workingDir, "config.json");
 while (input == null)
 {
     Console.Write($"Please enter the path to the config file ({configFile}): ");
@@ -26,8 +28,35 @@ while (input == null)
 
 // Load the config
 Configurations config = Configurations.LoadOrCreate(configFile);
+
+// Get the working directory
+// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+if (config.WorkingDirectory == null)
+{
+    input = null;
+    while (input == null)
+    {
+        Console.Write($"Please enter the path to the working directory ({workingDir}): ");
+        
+        input = Console.ReadLine();
+        
+        if (input == null)
+        {
+            throw new NotImplementedException();
+        }
+        else if (input != "")
+        {
+            configFile = input;
+        }
+    }
+}
+else
+{
+    workingDir = config.WorkingDirectory;
+}
+
 // Load the key
-string keyPath = Path.Join(config.WorkingDirectory, config.KeyFile);
+string keyPath = Path.Join(workingDir, config.KeyFile);
 string key = FileEncryption.LoadOrGenerateKey(keyPath);
 
 // Present the options
@@ -54,15 +83,15 @@ while (input != null)
     switch (selection)
     {
         case 1:
-            FileEncryption.EncryptAll(config.WorkingDirectory, config.Exceptions, key, true);
+            FileEncryption.EncryptAll(workingDir, config.Exceptions, key, true);
             Console.WriteLine("All files have been encrypted.\n");
             break;
         case 2:
-            FileEncryption.DecryptAll(config.WorkingDirectory, config.Exceptions, key, true);
+            FileEncryption.DecryptAll(workingDir, config.Exceptions, key, true);
             Console.WriteLine("All files have been decrypted.\n");
             break;
         case 3:
-            key = FileEncryption.RotateKey(config.WorkingDirectory, config.Exceptions, key);
+            key = FileEncryption.RotateKey(workingDir, config.Exceptions, key);
             File.WriteAllText(keyPath, key);
             Console.WriteLine("Key has been rotated and used to encrypt all files.\n");
             break;
