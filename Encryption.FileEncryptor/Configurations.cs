@@ -31,7 +31,7 @@ public class Configurations
     {
         if (!File.Exists(path))
         {
-            File.WriteAllText(path, "{}");
+            File.WriteAllText(path, "{\"keyFile\": \"key\", \"exceptions\": [\"key\", \"config.json\"]}");
         }
         
         return JsonConvert.DeserializeObject<Configurations>(File.ReadAllText(path)) ?? throw new InvalidOperationException();
