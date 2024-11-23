@@ -10,6 +10,7 @@ Console.WriteLine($"Version {assembly.Version}");
 string workingDir = Directory.GetCurrentDirectory();
 Action? action = null;
 bool usingDefaultWorkingDir = true;
+bool failIfKeyNotFound = false;
 
 var result = Parser.Default.ParseArguments<CliOptions>(args)
     .WithParsed<CliOptions>(options =>
@@ -18,6 +19,7 @@ var result = Parser.Default.ParseArguments<CliOptions>(args)
         {
             workingDir = options.WorkingDir;
             action = options.Action;
+            failIfKeyNotFound = options.FailIfKeyNotFound;
             usingDefaultWorkingDir = false;
         }
     });
@@ -86,6 +88,18 @@ else if (usingDefaultWorkingDir)
 
 // Load the key
 string keyPath = Path.Join(workingDir, config.KeyFile);
+if (!File.Exists(keyPath))
+{
+    if (failIfKeyNotFound)
+    {
+        Console.WriteLine($"Key file at {keyPath} could not be found. Exiting.");
+        return 1;
+    }
+    else
+    {
+        Console.WriteLine($"Key file at {keyPath} could not be found. Generating a new key file.");
+    }
+}
 string key = FileEncryption.LoadOrGenerateKey(keyPath);
 
 // Present the options
