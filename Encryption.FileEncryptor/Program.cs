@@ -92,7 +92,8 @@ string key = FileEncryption.LoadOrGenerateKey(keyPath);
 KeyValuePair<Action, string>[] options = [
     new(Action.EncryptAll, "Encrypt all files"),
     new(Action.DecryptAll, "Decrypt all files"),
-    new(Action.RotateKey, "Rotate key")
+    new(Action.RotateKey, "Rotate key"),
+    new(Action.Exit, "Exit"),
 ];
 
 if (action == null)
@@ -105,19 +106,18 @@ if (action == null)
         {
             Console.WriteLine($"{i+1}. {options[i].Value}");
         }
-        Console.WriteLine("4. Exit");
         Console.Write("Please enter a value corresponding to an option above: ");
 
         input = Console.ReadLine();
 
         bool success = int.TryParse(input, out var selection);
-        if (!success || selection < 1 || selection > options.Length + 1)
+        if (!success || selection < 1 || selection > options.Length)
         {
             Console.WriteLine("Invalid input. Please try again.\n");
             continue;
         }
 
-        ProcessAction(options[selection].Key);
+        ProcessAction(options[selection-1].Key);
     }
 }
 else
