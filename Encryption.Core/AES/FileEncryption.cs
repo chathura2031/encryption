@@ -42,7 +42,7 @@ public static class FileEncryption
             return key;
         }
         
-        return File.ReadAllText("/home/chathura/Projects/os-setup-secrets/key");
+        return File.ReadAllText(keyPath);
     }
 
     /// <summary>
